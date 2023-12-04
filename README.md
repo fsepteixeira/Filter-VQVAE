@@ -1,6 +1,7 @@
 
 # Filter VQ-VAE
 This is the official PyTorch implementation of [Privacy-oriented manipulation of speaker representations](https://arxiv.org/pdf/2310.06652.pdf).
+This code heavily relies on [SpeechBrain](https://speechbrain.github.io) [1], using among other things SpeechBrain's [pre-trained ECAPA-TDNN model](https://huggingface.co/speechbrain/spkrec-ecapa-voxceleb), as well as [Pytorch-Lightning](https://lightning.ai/docs/pytorch/stable/).
 
 ### Setup
 1. Download source code from GitHub
@@ -160,7 +161,7 @@ To evaluate any classifier with other partitions, or other pre-trained models, o
 ```
 
 - Note that we are using [pytorch-lightning](https://lightning.ai/docs/pytorch/stable/), and that repeating experiments will create new checkpoints within the same checkpoint folder for each experiment. Monitor new checkpoints to ensure you are using the correct one in downstream experiments.
-- This repository uses [Zebra](https://gitlab.eurecom.fr/nautsch/zebra/-/tree/master) to compute the Zebra metrics proposed in [1].
+- This repository uses [Zebra](https://gitlab.eurecom.fr/nautsch/zebra/-/tree/master) to compute the Zebra metrics proposed in [2].
 
-
-[1] [Nautsch, A., Patino, J., Tomashenko, N., Yamagishi, J., Noé, P.-G., Bonastre, J.-F., Todisco, M., Evans, N. (2020) The Privacy ZEBRA: Zero Evidence Biometric Recognition Assessment. Proc. Interspeech 2020, 1698-1702, doi: 10.21437/Interspeech.2020-1815](https://www.isca-speech.org/archive/interspeech_2020/nautsch20_interspeech.html).
+[1] [Ravanelli, Mirco, et al. "SpeechBrain: A general-purpose speech toolkit." arXiv preprint arXiv:2106.04624 (2021)](https://arxiv.org/abs/2106.04624).
+[2] [Nautsch, A., Patino, J., Tomashenko, N., Yamagishi, J., Noé, P.-G., Bonastre, J.-F., Todisco, M., Evans, N. (2020) The Privacy ZEBRA: Zero Evidence Biometric Recognition Assessment. Proc. Interspeech 2020, 1698-1702, doi: 10.21437/Interspeech.2020-1815](https://www.isca-speech.org/archive/interspeech_2020/nautsch20_interspeech.html).
