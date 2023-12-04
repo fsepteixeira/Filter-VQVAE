@@ -171,4 +171,5 @@ To evaluate any classifier with other partitions, or other pre-trained models, o
 - This repository uses [Zebra](https://gitlab.eurecom.fr/nautsch/zebra/-/tree/master) to compute the Zebra metrics proposed in [2].
 
 [1] [Ravanelli, Mirco, et al. "SpeechBrain: A general-purpose speech toolkit." arXiv preprint arXiv:2106.04624 (2021)](https://arxiv.org/abs/2106.04624).
+
 [2] [Nautsch, A., Patino, J., Tomashenko, N., Yamagishi, J., Noé, P.-G., Bonastre, J.-F., Todisco, M., Evans, N. (2020) The Privacy ZEBRA: Zero Evidence Biometric Recognition Assessment. Proc. Interspeech 2020, 1698-1702, doi: 10.21437/Interspeech.2020-1815](https://www.isca-speech.org/archive/interspeech_2020/nautsch20_interspeech.html).
