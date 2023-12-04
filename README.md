@@ -56,7 +56,9 @@ python main_extract.py hparams/run_x_vector_extraction.yaml \
 ```data_folder``` replaces ```<any_path>``` with any desired path.
 You need to run this command for the three partitions.
 
-3. Train speaker id classifier using your training data (this will be used as a part of the training of the VQ-VAE). By default the model will be saved to ```lightning_logs/speaker_id_classifier/```. Use as many speakers and samples as possible, as a stronger speaker classifier will end-up providing better results in terms of speaker verification for the "filtered" samples.
+3. Train speaker id classifier using your training data (this will be used as a part of the training of the VQ-VAE).
+  
+By default the model will be saved to ```lightning_logs/speaker_id_classifier/```. Use as many speakers and samples as possible, as a stronger speaker classifier will end-up providing better results in terms of speaker verification for the "filtered" samples.
 ```
 python main_speaker_classifier.py hparams/train_speaker_classifier.yaml \
                                   --train True          # Whether to train the model \
@@ -86,7 +88,9 @@ python main_speaker_classifier.py hparams/train_speaker_classifier.yaml \
                                   --data_folder_dev   <path_to_folder_containing_dev_speaker_embeddings> \
                                   --data_folder_eval  <path_to_folder_containing_eval_speaker_embeddings>
 
-4. Train "external" sex/age classifier using the VQ-VAE training data (this will be used as a part of the training of the VQ-VAE). By default the model will be saved to ```lightning_logs/embedding_classifier_<attribute>/checkpoints/```.
+4. Train "external" sex/age classifier using the VQ-VAE training data (this will be used as a part of the training of the VQ-VAE).
+
+By default the model will be saved to ```lightning_logs/embedding_classifier_<attribute>/checkpoints/```.
 ```
 python main_classifier.py hparams/train_sex_classifier.yaml \
                           --train True \
@@ -102,7 +106,9 @@ python main_classifier.py hparams/train_sex_classifier.yaml \
                 
 ```
 
-5. Train VQ-VAE for sex/age. By default the model will be saved to ```lightning_logs/vq_vae_adv_mi_<attribute>/checkpoints/```.
+5. Train VQ-VAE for sex/age.
+
+By default the model will be saved to ```lightning_logs/vq_vae_adv_mi_<attribute>/checkpoints/```.
 ```
 python main_filter_vqvae.py hparams/train_filter_vq_vae_sex.yaml
                             --train True \ 
