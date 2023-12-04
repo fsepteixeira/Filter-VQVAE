@@ -6,7 +6,7 @@ This code heavily relies on [SpeechBrain](https://speechbrain.github.io) [1], us
 ### Setup
 1. Download source code from GitHub
   ``` 
-  git clone [https://github.com/fsepteixeira/Filter-VQVAE.git](https://github.com/fsepteixeira/Filter-VQVAE.git)
+  git clone https://github.com/fsepteixeira/Filter-VQVAE.git
   ```
 2. Create [miniconda](https://docs.conda.io/en/latest/miniconda.html) virtual-environment
   ```
