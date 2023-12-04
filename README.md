@@ -73,7 +73,7 @@ python main_speaker_classifier.py hparams/train_speaker_classifier.yaml \
                                   --data_folder_eval  <path_to_folder_containing_eval_speaker_embeddings>
 ```
 To test a pre-trained model, use the following:
-
+```
 python main_speaker_classifier.py hparams/train_speaker_classifier.yaml \
                                   --train False         # Whether to train the model \
                                   --evaluate True       # Whether to evaluate the trained model \
@@ -87,7 +87,7 @@ python main_speaker_classifier.py hparams/train_speaker_classifier.yaml \
                                   --data_folder_train <path_to_folder_containing_train_speaker_embeddings> \
                                   --data_folder_dev   <path_to_folder_containing_dev_speaker_embeddings> \
                                   --data_folder_eval  <path_to_folder_containing_eval_speaker_embeddings>
-
+```
 4. Train "external" sex/age classifier using the VQ-VAE training data (this will be used as a part of the training of the VQ-VAE).
 
 By default the model will be saved to ```lightning_logs/embedding_classifier_<attribute>/checkpoints/```.
