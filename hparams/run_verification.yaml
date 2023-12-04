@@ -1,0 +1,23 @@
+
+device: "cuda:0"
+n_gpus: 1
+
+accelerator: gpu
+approach: original_data
+lightning_folder: lightning_logs/
+log_path: !ref verification_<approach>
+
+data_csv: !PLACEHOLDER
+data_folder: !PLACEHOLDER
+save_verification_scores: False
+save_score_path: null
+
+data:
+
+  num_workers: 1
+  data_csv: !ref <data_csv>
+  data_folder: !ref <data_folder>
+
+  save_verification_scores: !ref <save_verification_scores>
+  save_score_path: !ref <save_score_path>
+

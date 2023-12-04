@@ -1,0 +1,5 @@
+from .FilterVQVAETrainer import FilterVQVAETrainer
+from .ClassifierTrainer import ClassifierTrainer
+from .ClassifierwFilterTrainer import ClassifierwFilterTrainer
+from .SpeakerIDTrainer import SpeakerIDTrainer
+from .VerificationTrainer import VerificationTrainer

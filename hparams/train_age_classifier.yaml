@@ -1,0 +1,91 @@
+
+train: True
+evaluate: True
+partition: eval
+load_from_checkpoint: false
+checkpoint: null
+every_n_epochs: 1
+
+train_csv: !PLACEHOLDER
+dev_csv: !PLACEHOLDER
+eval_csv: !PLACEHOLDER
+
+data_folder_train: !PLACEHOLDER
+data_folder_dev: !PLACEHOLDER
+data_folder_eval: !PLACEHOLDER
+
+label: age
+
+lightning_path: lightning_logs/
+log_path: embedding_classifier_age
+checkpoint_name: checkpoint
+
+save_mvn: False
+mvn_save_path: external/age_logits_mvn.pth
+
+n_gpus: 1
+epochs: 20
+accelerator: gpu
+
+lr: 0.0001
+max_lr: 0.0005
+dropout_p: 0.45
+weight_decay: 0.0001
+
+batch_size: 128
+num_workers: 16
+
+regression: True
+n_classes: 1
+n_features: 192
+activation: !name:torch.nn.LeakyReLU
+
+n_hidden: 128
+classifier:  
+
+  n_classes:  !ref <n_classes>
+  n_features: !ref <n_features>
+  activation: !ref <activation>
+
+  linear:
+    in_dim:  [!ref <n_features>, !ref <n_hidden>]
+    out_dim: [!ref <n_hidden>,   !ref <n_hidden>] 
+    activation: !ref <activation>
+  
+  output:
+    in_dim: !ref <n_hidden>
+    out_dim: !ref <n_classes>
+  
+training:
+  n_gpus: !ref <n_gpus>
+  epochs: !ref <epochs>
+  batch_size: !ref <batch_size>
+  lr: !ref <lr>
+  max_lr: !ref <max_lr>
+  weight_decay: !ref <weight_decay>
+  dropout_schedule: !new:utils.DropoutScheduler
+    dropout_p: !ref <dropout_p>
+  save_mvn: !ref <save_mvn>
+  mvn_save_path: !ref <mvn_save_path>
+
+loss: !new:torch.nn.MSELoss
+
+data:
+  batch_size: !ref <batch_size>
+  num_workers: !ref <num_workers>
+
+  label: !ref <label>
+  train_csv: !ref <train_csv>
+  dev_csv: !ref <dev_csv>
+  eval_csv: !ref <eval_csv>
+
+  data_folder_train: !ref <data_folder_train>
+  data_folder_dev: !ref <data_folder_dev>
+  data_folder_eval: !ref <data_folder_eval>
+
+  return_full_id: False
+  return_trg_label: False
+
+  shuffle_train: True
+  shuffle_dev: False
+  shuffle_eval: False

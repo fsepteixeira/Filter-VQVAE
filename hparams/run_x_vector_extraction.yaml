@@ -1,0 +1,37 @@
+
+target_folder: !PLACEHOLDER # Where to save the speaker embeddings
+partition: !PLACEHOLDER # From which partition to extract embeddings
+
+train_csv: !PLACEHOLDER # Path to train .csv
+dev_csv:   !PLACEHOLDER # Path to dev .csv 
+eval_csv:  !PLACEHOLDER # Path to eval .csv
+data_folder: !PLACEHOLDER # Path to folder with audio samples
+
+log_path: logs/embedding_extraction
+
+device: cuda
+num_workers: 1
+batch_size:  1
+sample_rate: 16000
+save_dir: external/ # Where to save the embedding extractor
+
+extractor:
+  source: speechbrain/spkrec-ecapa-voxceleb
+  savedir: !ref <save_dir> 
+  normalize: True
+  device: !ref <device>
+
+data:
+  batch_size: !ref <batch_size>
+  num_workers: !ref <num_workers>
+
+  random_chunk: False
+  chunk_length: 10
+  sample_rate: !ref <sample_rate>
+
+  label: sex
+  train_csv: !ref <train_csv>
+  dev_csv: !ref <dev_csv>
+  eval_csv: !ref <eval_csv>
+
+  data_folder: !ref <data_folder>

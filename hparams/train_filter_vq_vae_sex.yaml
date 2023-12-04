@@ -1,0 +1,222 @@
+
+train: True
+evaluate: True
+partition: eval
+load_from_checkpoint: False
+checkpoint: null
+
+train_csv: !PLACEHOLDER # Path to train .csv
+dev_csv:   !PLACEHOLDER # Path to dev .csv 
+eval_csv:  !PLACEHOLDER # Path to eval .csv
+
+data_folder_train: !PLACEHOLDER # Path to folder with train embeddings
+data_folder_dev: !PLACEHOLDER # Path to folder with dev embeddings
+data_folder_eval: !PLACEHOLDER # Path to folder with eval embeddingsa
+
+n_speakers: !PLACEHOLDER # number of speakers in the training set
+mvn_path: !PLACEHOLDER
+pre_trained_classifier_checkpoint: !PLACEHOLDER
+
+label_encoder_path: !PLACEHOLDER
+speaker_id_classifier_checkpoint: !PLACEHOLDER
+
+label: sex
+n_adv_classes: 2
+regression: False
+attribute: !ref <label>
+approach: adv_mi
+lightning_path: lightning_logs/
+log_path: !ref vq_vae_<approach>_<attribute>
+checkpoint_name: checkpoint
+
+mi: True
+adv: True
+
+zeta: 10.0 # Weight for adversarial loss -- corresponds to "delta" in the paper
+delta: 10.0 # Weight for MI loss -- corresponds to "epsilon" in the paper
+
+n_gpus: 1
+device: "cuda:0"
+accelerator: gpu
+every_n_epochs: 1
+
+epochs: 100
+batch_size: 256
+num_workers: 4
+
+lr: 0.008
+max_lr: 0.01
+dropout_p: 0.01
+weight_decay: 0.0
+n_features: 192
+
+random: True
+random_mode: remb_same
+
+#### Nuisance classifier ####
+activation: !name:torch.nn.LeakyReLU
+
+embedding_classifier:
+  n_classes: !ref <n_adv_classes>
+  n_features: !ref <n_features>
+  activation: !ref <activation>
+
+  linear:
+    in_dim:  [!ref <n_features>, 128]
+    out_dim: [128,               128] 
+    activation: !ref <activation>
+  
+  output:
+    in_dim: 128
+    out_dim: !ref <n_adv_classes>
+ 
+  mvn_path: !ref <mvn_path> # Path to pre-trained distribution of sex logits
+  checkpoint: !ref <pre_trained_classifier_checkpoint> # Path to pre-trained sex classifier
+  map_location: cpu
+
+
+#### ---- ####
+
+#### Adversarial classifier ####
+adversarial_classifier:
+    n_classes: !ref <n_adv_classes>
+    activation: !ref <activation>
+  
+    linear:
+      in_dim:  [256, 128]
+      out_dim: [128, 128] 
+      activation: !ref <activation>
+  
+    output:
+      in_dim: 128
+      out_dim: !ref <n_adv_classes>
+#### ---- ####
+
+emb_dim: 256
+
+#### VQ-VAE definition ####
+vq_vae:
+  gated: False
+  n_features: !ref <n_features>
+  encoder:
+    n_layers: 3
+    in_dim:  [ !ref <n_features>, 512, 512]
+    out_dim: [ 512,               512, 128]
+    activation: !name:torch.nn.LeakyReLU
+  
+  decoder:
+    n_layers: 3
+    in_dim:  [ 260, 512, 512] # [0] = emb_dim + projection dim (8)
+    out_dim: [ 512, 512, 512]
+    activation: !name:torch.nn.LeakyReLU
+  
+  quantizer: # Following the parameters of wav2vec 2.0
+    # 1) maps input_dim -> G*V || 2) maps G*V -> e = d/G 
+    input_dim:   128
+    emb_dim:     !ref <emb_dim> #  -> d/G = 64
+    groups_dim:  64   # G #From each of the codebooks choose from one of the entries (a vector of size emb/G)
+    entries_dim: 128  # V
+    time_first: True
+    return_q:   True
+    tau: (2, 0.5, 0.999995)
+  
+  output_layer:
+    in_dim: 512
+    out_dim: !ref <n_features>
+
+  emb_projection:
+    n_classes: !ref <n_adv_classes>
+    projection_dim: 4
+
+  q_projection:
+    in_dim: !ref <emb_dim>
+    projection_dim: !ref <emb_dim>
+
+#### ---- ####
+
+#### Losses, training & data ####
+loss:
+  mi: !new:modules.DiffClusterMIST
+    parameters:
+      k: 4                     # k-th neighbor that provides the anchor distance to compute MI
+      dist_metric: euclidean   # Metric used to compute pairwise distances between vectors
+      n_classes: 2
+
+  mi_metric: !new:modules.ClusterMI
+    parameters:
+      k: 4                           # k-th neighbor that provides the anchor distance to compute MI
+      dist_metric: euclidean
+      n_classes: 2
+
+  adv: !new:torch.nn.CrossEntropyLoss
+  rec: !new:torch.nn.MSELoss #modules.ReconstructionLoss
+  aam: !new:speechbrain.nnet.losses.LogSoftmaxWrapper
+    loss_fn: !new:speechbrain.nnet.losses.AdditiveAngularMargin
+      margin: 0.2
+      scale: 30
+
+training:
+  regression: !ref <regression>
+  random_mode: !ref <random_mode>
+  random_logits_mode: mvn
+  epochs: !ref <epochs>
+  n_gpus: !ref <n_gpus>
+  batch_size: !ref <batch_size>
+  lr: !ref <lr>
+  max_lr: !ref <max_lr>
+  weight_decay: !ref <weight_decay>
+  dropout_schedule: !new:utils.DropoutScheduler
+    dropout_p: !ref <dropout_p>
+
+  alpha: 1.0  # Weight for the Reconstruction loss
+  beta:  0.1  # Weight for the Codebook Regularization loss
+  gamma: 1.0  # Weight for the AAM loss
+  delta: !ref <delta>  # Weight for the Mutual Information loss
+  zeta:  !ref <zeta>  # Weight for the adversarial classifier loss
+  mi_start: 0 # How many epochs until MI starts to be computed
+  n_adv_classes: !ref <n_adv_classes>
+
+  MI: !ref <mi>
+  ADV: !ref <adv>
+  adversarial:
+    after_bottleneck: True
+  mi: 
+    after_bottleneck: True
+
+  n_speakers: !ref <n_speakers> 
+  n_features: !ref <n_features>
+
+  extractor:
+    n_speakers: !ref <n_speakers>
+    n_features: !ref <n_features>
+    source: !ref <speaker_id_classifier_checkpoint>
+    label_encoder_path: !ref <label_encoder_path>
+
+data:
+  balanced_train: True
+  balanced_val:   False
+  balanced_test:  False
+
+  oversample_train: True
+  oversample_dev: False
+  oversample_eval: False
+
+  batch_size: !ref <batch_size>
+  batch_size_dev: !ref <batch_size>
+  batch_size_eval: !ref <batch_size>
+  num_workers: !ref <num_workers>
+
+  label: !ref <label>
+  train_csv: !ref <train_csv> 
+  dev_csv:   !ref <dev_csv>
+  eval_csv:  !ref <eval_csv>
+
+  data_folder_train: !ref <data_folder_train>
+  data_folder_dev: !ref <data_folder_dev>
+  data_folder_eval: !ref <data_folder_eval>
+
+  return_full_id: False
+
+  shuffle_train: True
+  shuffle_dev: False
+  shuffle_eval: False

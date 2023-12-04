@@ -1,0 +1,9 @@
+external/**/*
+*.sh
+**/*.h5
+**/*.csv
+**/*.pyc
+lightning_logs/**/*
+__pychache__/
+*.py[cod]
+*$py.class

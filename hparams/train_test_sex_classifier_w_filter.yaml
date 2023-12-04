@@ -1,0 +1,157 @@
+
+train: True
+evaluate: True
+partition: eval
+load_from_checkpoint: False
+checkpoint: null
+
+filter_vq_vae: !PLACEHOLDER
+
+train_csv: !PLACEHOLDER
+dev_csv: !PLACEHOLDER
+eval_csv: !PLACEHOLDER
+
+data_folder_train: !PLACEHOLDER
+data_folder_dev: !PLACEHOLDER
+data_folder_eval: !PLACEHOLDER
+
+mvn_path: !PLACEHOLDER
+
+label: sex
+
+lightning_path: lightning_logs/
+log_path: embedding_classifier_w_filter_sex
+checkpoint_name: checkpoint
+
+filter_data_train: True
+filter_data_valid: True
+
+random_mode: mean  #mean #remb_same #same #"true" #zeros
+random_logits_mode: mvn
+
+save_mvn: False
+mvn_save_path: null # Path to save logit distribution
+
+n_gpus: 1
+epochs: 20
+accelerator: gpu
+every_n_epochs: 1
+
+batch_size: 64
+num_workers: 16
+
+regression: False
+n_classes: 2
+n_features: 192
+n_hidden: 128
+activation: !name:torch.nn.LeakyReLU
+
+lr: 0.0001
+max_lr: 0.0005
+dropout_p: 0.3
+weight_decay: 0.0
+
+logits_save_path: null
+score_save_path: null
+key_save_path: null
+
+classifier:  
+  checkpoint: null
+  n_classes:  !ref <n_classes>
+  n_features: !ref <n_features>
+  activation: !ref <activation>
+
+  linear:
+    in_dim:  [!ref <n_features>, !ref <n_hidden>]
+    out_dim: [!ref <n_hidden>,   !ref <n_hidden>] 
+    activation: !ref <activation>
+  
+  output:
+    in_dim: !ref <n_hidden>
+    out_dim: !ref <n_classes>
+  
+filter:
+  checkpoint: !ref <filter_vq_vae>
+  gated: False
+  n_features: 192
+  encoder:
+    n_layers: 3
+    in_dim:  [ 192, 512, 512]
+    out_dim: [ 512, 512, 128]
+    activation: !name:torch.nn.LeakyReLU
+  
+  decoder:
+    n_layers: 3
+    in_dim:  [ 260, 512, 512] # [0] = emb_dim + projection dim (8)
+    out_dim: [ 512, 512, 512]
+    activation: !name:torch.nn.LeakyReLU
+  
+  quantizer: # Following the parameters of wav2vec 2.0
+    # 1) maps input_dim -> G*V || 2) maps G*V -> e = d/G 
+    input_dim:   128
+    emb_dim:     256 #  -> d/G = 64
+    groups_dim:  64   # G #From each of the codebooks choose from one of the entries (a vector of size emb/G)
+    entries_dim: 128  # V
+    time_first: True
+    return_q:   True
+    tau: (2, 0.5, 0.999995)
+  
+  output_layer:
+    in_dim: 512
+    out_dim: 192
+
+  emb_projection:
+    n_classes: 2
+    projection_dim: 4
+
+  q_projection:
+    in_dim: 256 
+    projection_dim: 256
+
+training:
+  n_gpus: !ref <n_gpus>
+  epochs: !ref <epochs>
+  batch_size: !ref <batch_size>
+  lr: !ref <lr>
+  max_lr: !ref <max_lr>
+  weight_decay: !ref <weight_decay>
+  dropout_schedule: !new:utils.DropoutScheduler
+    dropout_p: !ref <dropout_p>
+  filter_data_train: !ref <filter_data_train>
+  filter_data_valid: !ref <filter_data_valid>
+  random_mode: !ref <random_mode>
+  random_logits_mode: !ref <random_logits_mode>
+  mvn_load_path: !ref <mvn_path>
+
+  zebra: True
+  save_mvn: False
+  mvn_save_path: null 
+  save_predictions: False
+  save_predictions_params:
+    logits_save_path: !ref <logits_save_path>
+    score_save_path: !ref <score_save_path>
+    key_save_path: !ref <key_save_path>
+
+loss: !new:torch.nn.CrossEntropyLoss
+
+data:
+  batch_size: !ref <batch_size>
+  num_workers: !ref <num_workers>
+
+  label: !ref <label>
+
+  train_csv: !ref <train_csv>
+  dev_csv:   !ref <dev_csv>
+  eval_csv:  !ref <eval_csv>
+
+  data_folder_train: !ref <data_folder_train>
+  data_folder_dev: !ref <data_folder_dev>
+  data_folder_eval: !ref <data_folder_eval>
+
+  shuffle_train: True
+  shuffle_dev: False
+  shuffle_eval: False
+
+  return_full_id: True
+  return_trg_label: False
+ 

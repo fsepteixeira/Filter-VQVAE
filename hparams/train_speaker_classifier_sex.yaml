@@ -1,0 +1,88 @@
+
+train: !PLACEHOLDER
+evaluate: !PLACEHOLDER
+partition: !PLACEHOLDER
+
+save_label_encoder: True
+save_label_encoder_path: external/sex_speaker_label_encoder.pth
+
+lightning_path: lightning_logs
+log_path: speaker_id_classifier
+checkpoint_name: checkpoint
+load_from_checkpoint: False
+checkpoint: null
+
+every_n_epochs: 1
+
+accelerator: gpu
+device: "cuda:0"
+n_gpus: 1
+
+epochs: 4
+lr: 0.008
+max_lr: 0.01
+dropout_p: 0.01
+weight_decay: 0.0
+
+batch_size: 256
+num_workers: 4
+n_features: 192
+n_speakers: !PLACEHOLDER #Number of speaker in training dataset
+
+train_csv: !PLACEHOLDER # Path to train .csv
+dev_csv:   !PLACEHOLDER # Path to dev .csv 
+eval_csv:  !PLACEHOLDER # Path to eval .csv
+
+data_folder_train: !PLACEHOLDER # Path to folder with train embeddings
+data_folder_dev: !PLACEHOLDER # Path to folder with dev embeddings
+data_folder_eval: !PLACEHOLDER # Path to folder with eval embeddings
+
+#### VQ-VAE definition ####
+speaker_classifier:
+  n_speakers: !ref <n_speakers>
+  n_features: !ref <n_features>
+
+#### Losses, training & data ####
+loss:
+  aam: !new:speechbrain.nnet.losses.LogSoftmaxWrapper
+    loss_fn: !new:speechbrain.nnet.losses.AdditiveAngularMargin
+      margin: 0.2
+      scale: 30
+
+training:
+  epochs: !ref <epochs>
+  n_gpus: !ref <n_gpus>
+  batch_size: !ref <batch_size>
+  lr: !ref <lr>
+  max_lr: !ref <max_lr>
+  weight_decay: !ref <weight_decay>
+
+data:
+  balanced_train: False
+  balanced_val:   False
+  balanced_test:  False
+
+  oversample_train: False
+  oversample_dev: False
+  oversample_eval: False
+
+  batch_size:      !ref <batch_size>
+  batch_size_dev:  !ref <batch_size>
+  batch_size_eval: !ref <batch_size>
+  num_workers:     !ref <num_workers>
+
+  label: spkid
+  train_csv: !ref <train_csv>
+  dev_csv:   !ref <dev_csv>
+  eval_csv:  !ref <eval_csv>
+
+  data_folder_train: !ref <data_folder_train>
+  data_folder_dev:   !ref <data_folder_dev>
+  data_folder_eval:  !ref <data_folder_eval>
+
+  return_full_id: False
+
+  shuffle_train: True
+  shuffle_dev: False
+  shuffle_eval: False
+
