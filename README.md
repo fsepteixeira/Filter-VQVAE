@@ -30,6 +30,7 @@ All experiments use cuda by default. If using cpu add "--device cpu" to any of t
 For adjusts to these experiments and extra options, please check the contents of the .yaml files, or create a pull request!
 
 1. Setup data
+   
 Before running any experiments you need to create .csv files for each partition {train, dev, eval}.
 The csv files should have as a header:
 ```
