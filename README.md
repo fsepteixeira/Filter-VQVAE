@@ -170,9 +170,9 @@ To evaluate any classifier with other partitions, or other pre-trained models, o
 - Note that we are using [pytorch-lightning](https://lightning.ai/docs/pytorch/stable/), and that repeating experiments will create new checkpoints within the same checkpoint folder for each experiment. Monitor new checkpoints to ensure you are using the correct one in downstream experiments.
 - This repository uses [Zebra](https://gitlab.eurecom.fr/nautsch/zebra/-/tree/master) to compute the Zebra metrics proposed in [2].
 
-\[1\] [Ravanelli, Mirco, et al. "SpeechBrain: A general-purpose speech toolkit." arXiv preprint arXiv:2106.04624 (2021)](https://arxiv.org/abs/2106.04624).
+\[1\][Ravanelli, Mirco, et al. "SpeechBrain: A general-purpose speech toolkit." arXiv preprint arXiv:2106.04624 (2021)](https://arxiv.org/abs/2106.04624).
 
-\[2\] [Nautsch, A., Patino, J., Tomashenko, N., Yamagishi, J., Noé, P.-G., Bonastre, J.-F., Todisco, M., Evans, N. (2020) The Privacy ZEBRA: Zero Evidence Biometric Recognition Assessment. Proc. Interspeech 2020, 1698-1702, doi: 10.21437/Interspeech.2020-1815](https://www.isca-speech.org/archive/interspeech_2020/nautsch20_interspeech.html)
+\[2\][Nautsch, A., et al. "The Privacy ZEBRA: Zero Evidence Biometric Recognition Assessment". Proc. Interspeech 2020, pp. 1698-1702 (2020)](https://www.isca-speech.org/archive/interspeech_2020/nautsch20_interspeech.html).
 
 If you use this code please cite this work as:
 ```
