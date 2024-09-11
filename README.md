@@ -1,6 +1,6 @@
 
 # Filter VQ-VAE
-This is the official PyTorch implementation of [Privacy-oriented manipulation of speaker representations](https://arxiv.org/pdf/2310.06652.pdf).
+This is the official PyTorch implementation of [Privacy-oriented manipulation of speaker representations](https://ieeexplore.ieee.org/abstract/document/10547045).
 This code heavily relies on [SpeechBrain](https://speechbrain.github.io) [1], using among other things SpeechBrain's [pre-trained ECAPA-TDNN model](https://huggingface.co/speechbrain/spkrec-ecapa-voxceleb), as well as [Pytorch-Lightning](https://lightning.ai/docs/pytorch/stable/).
 
 ### Setup
@@ -27,7 +27,7 @@ The following examples all correspond to the sex attribute but also apply to age
 For the paper's experiments you do not need to adjust the configuration files, just follow the commands below.
 All experiments use cuda by default. If using cpu add "--device cpu" to any of the commands below.
 
-For adjusts to these experiments and extra options, please check the contents of the .yaml files, or create a pull request!
+For adjustments to these experiments and extra options, please check the contents of the .yaml files, or create a pull request!
 
 1. Setup data
    
@@ -173,3 +173,17 @@ To evaluate any classifier with other partitions, or other pre-trained models, o
 [1] [Ravanelli, Mirco, et al. "SpeechBrain: A general-purpose speech toolkit." arXiv preprint arXiv:2106.04624 (2021)](https://arxiv.org/abs/2106.04624).
 
 [2] [Nautsch, A., Patino, J., Tomashenko, N., Yamagishi, J., Noé, P.-G., Bonastre, J.-F., Todisco, M., Evans, N. (2020) The Privacy ZEBRA: Zero Evidence Biometric Recognition Assessment. Proc. Interspeech 2020, 1698-1702, doi: 10.21437/Interspeech.2020-1815](https://www.isca-speech.org/archive/interspeech_2020/nautsch20_interspeech.html).
+
+If you use this code please cite this work as:
+```
+  @article{teixeira2024privacy,
+  author={Teixeira, Francisco and Abad, Alberto and Raj, Bhiksha and Trancoso, Isabel},
+  journal={IEEE Access}, 
+  title={Privacy-Oriented Manipulation of Speaker Representations}, 
+  year={2024},
+  volume={12},
+  number={},
+  pages={82949-82971},
+  keywords={Task analysis;Privacy;Vectors;Market research;Training;Solid modeling;Linguistics;Age information removal;attribute-based privacy;sex information removal;privacy-oriented manipulation;speaker embeddings;speaker recognition},
+  doi={10.1109/ACCESS.2024.3409067}}
+```
